@@ -24,7 +24,7 @@ class Response extends AbstractResponse
 
     public function isSuccessful()
     {
-        if(!isset($this->data->return->statusCode)) {
+        if (!isset($this->data->return->statusCode)) {
             return false;
         }
         return "A" === (string) $this->data->return->statusCode;
@@ -32,7 +32,7 @@ class Response extends AbstractResponse
 
     public function getTransactionReference()
     {
-        if(isset($this->data->return->transactionId)) {
+        if (isset($this->data->return->transactionId)) {
             return (string) $this->data->return->transactionId;
         }
 
@@ -43,11 +43,11 @@ class Response extends AbstractResponse
     {
         $msg = '';
 
-        if(isset($this->data->return->failures->failure)) {
+        if (isset($this->data->return->failures->failure)) {
             $msg .= $this->data->return->failures->failure;
         }
 
-        if(isset($this->data->return->failures->fieldname)) {
+        if (isset($this->data->return->failures->fieldname)) {
             $msg .= ' (fieldname : '.$this->data->return->failures->fieldname.')';
         }
 

@@ -2,7 +2,6 @@
 
 namespace Omnipay\AfterPay;
 
-use Omnipay\AfterPay\Message\PurchaseRequest;
 use Omnipay\Common\AbstractGateway;
 
 /**
@@ -59,6 +58,7 @@ class Gateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
+        /** \Omnipay\AfterPay\Message\PurchaseRequest */
         return $this->createRequest('\Omnipay\AfterPay\Message\PurchaseRequest', $parameters);
     }
 }

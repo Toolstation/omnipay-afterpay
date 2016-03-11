@@ -2,8 +2,10 @@
 
 namespace Omnipay\AfterPay\Message;
 
-use SoapClient;
 use DOMDocument;
+use Omnipay\AfterPay\AfterPayItem;
+use Omnipay\Common\ItemBag;
+use Omnipay\PayPal\AfterPayItemBag;
 use SimpleXMLElement;
 use Omnipay\Common\Message\AbstractRequest;
 
@@ -21,7 +23,7 @@ class PurchaseRequest extends AbstractRequest
     {
         $ip = parent::getClientIp();
 
-        if($ip == '::1') {
+        if ($ip == '::1') {
             $ip = '127.0.0.1';
         }
 
@@ -57,24 +59,44 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('portfolioId', $value);
     }
 
+    public function setLanguage($value)
+    {
+        return $this->setParameter('language', $value);
+    }
+
+    public function getLanguage()
+    {
+        return $this->getParameter('language');
+    }
+
+    public function setVatCode($value)
+    {
+        return $this->setParameter('vatCode', $value);
+    }
+
+    public function getVatCode()
+    {
+        return $this->getParameter('vatCode');
+    }
+
+    /**
+     * Set the items in this order
+     *
+     * @param ItemBag|array $items An array of items in this order
+     * @return ItemBag
+     */
+    public function setItems($items)
+    {
+        if ($items && !$items instanceof ItemBag) {
+            $items = new AfterPayItemBag($items);
+        }
+
+        return $this->setParameter('items', $items);
+    }
+
     public function getData()
     {
         $this->validate('amount', 'currency', 'transactionId');
-
-        // card requirements :
-        // not possible to validate specific card fields yet
-
-        // 'firstName',
-        // 'lastName',
-        // 'number',
-        // 'address1',
-        // 'address2',
-        // 'city',
-        // 'postcode',
-        // 'country',
-        // 'phone',
-        // 'email'
-
 
         $data = new SimpleXMLElement('<validateAndCheckB2COrder/>', LIBXML_NOERROR, false, 'ns1', true);
 
@@ -95,11 +117,7 @@ class PurchaseRequest extends AbstractRequest
 
         // b2corder : orderline
 
-        $data->b2corder->orderlines->articleDescription = 'Description';
-        $data->b2corder->orderlines->articleId = 1;
-        $data->b2corder->orderlines->quantity = 1;
-        $data->b2corder->orderlines->unitprice = $this->getAmountInteger();
-        $data->b2corder->orderlines->vatcategory = 1;
+        $data->b2corder->orderlines = $this->getItemData();
 
 
         $data->b2corder->ordernumber = $this->getTransactionId();
@@ -133,7 +151,7 @@ class PurchaseRequest extends AbstractRequest
         $data->b2corder->b2cbilltoAddress->referencePerson->gender = $this->getCard()->getGender();
 
         $data->b2corder->b2cbilltoAddress->referencePerson->initials = $this->getCard()->getFirstName();
-        $data->b2corder->b2cbilltoAddress->referencePerson->isoLanguage = 'NL';
+        $data->b2corder->b2cbilltoAddress->referencePerson->isoLanguage = $this->getLanguage();
         $data->b2corder->b2cbilltoAddress->referencePerson->lastname = $this->getCard()->getLastName();
         $data->b2corder->b2cbilltoAddress->referencePerson->phonenumber1 = $this->getCard()->getPhone();
 
@@ -159,7 +177,7 @@ class PurchaseRequest extends AbstractRequest
         $data->b2corder->b2cshiptoAddress->referencePerson->gender = $this->getCard()->getGender();
 
         $data->b2corder->b2cshiptoAddress->referencePerson->initials = $this->getCard()->getFirstName();
-        $data->b2corder->b2cshiptoAddress->referencePerson->isoLanguage = 'NL';
+        $data->b2corder->b2cshiptoAddress->referencePerson->isoLanguage = $this->getLanguage();
         $data->b2corder->b2cshiptoAddress->referencePerson->lastname = $this->getCard()->getLastName();
         $data->b2corder->b2cshiptoAddress->referencePerson->phonenumber1 = $this->getCard()->getPhone();
 
@@ -201,6 +219,26 @@ class PurchaseRequest extends AbstractRequest
         $httpResponse = $httpRequest->send();
 
         return $this->response = new Response($this, $httpResponse->getBody());
+    }
+
+    protected function getItemData()
+    {
+        $data = array();
+        $items = $this->getItems();
+        if ($items) {
+            /** @var AfterPayItem $item */
+            foreach ($items as $item) {
+                $order = new stdClass();
+                $order->articleId = $item->getCode();
+                $order->articleDescription = $item->getName();
+                $order->quantity = $item->getQuantity();
+                $order->unitprice = $this->formatCurrency($item->getPrice());
+                $order->vatcategory = $this->getVatCode();
+                $data[] = $order;
+            }
+        }
+
+        return $data;
     }
 
     public function getEndpoint()
