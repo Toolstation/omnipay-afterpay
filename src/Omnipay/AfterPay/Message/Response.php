@@ -16,10 +16,7 @@ class Response extends AbstractResponse
     {
         $this->request = $request;
 
-        // we only care about the content of the soap:Body element
-        $responseDom = new DOMDocument;
-        $responseDom->loadXML($data);
-        $this->data = simplexml_import_dom($responseDom->documentElement->firstChild->firstChild);
+        $this->data = $data;
     }
 
     public function isSuccessful()
@@ -42,6 +39,10 @@ class Response extends AbstractResponse
     public function getMessage()
     {
         $msg = '';
+
+        if (isset($this->data->return->rejectCode)) {
+            $msg .= $this->data->return->rejectDescription;
+        }
 
         if (isset($this->data->return->failures->failure)) {
             $msg .= $this->data->return->failures->failure;

@@ -22,6 +22,7 @@ class Gateway extends AbstractGateway
             'merchantId' => '',
             'password' => '',
             'portfolioId' => '',
+            'country' => '',
             'testMode' => false,
         );
     }
@@ -56,9 +57,25 @@ class Gateway extends AbstractGateway
         return $this->setParameter('portfolioId', $value);
     }
 
+    public function setCountry($value)
+    {
+        return $this->setParameter('country', $value);
+    }
+
+    public function getCountry()
+    {
+        return $this->getParameter('country');
+    }
+
     public function purchase(array $parameters = array())
     {
         /** \Omnipay\AfterPay\Message\PurchaseRequest */
         return $this->createRequest('\Omnipay\AfterPay\Message\PurchaseRequest', $parameters);
+    }
+
+    public function capture(array $parameters = array())
+    {
+        /** \Omnipay\AfterPay\Message\PurchaseRequest */
+        return $this->createRequest('\Omnipay\AfterPay\Message\Capture', $parameters);
     }
 }

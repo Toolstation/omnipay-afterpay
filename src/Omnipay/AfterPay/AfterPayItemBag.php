@@ -3,7 +3,7 @@
  * AfterPay Item bag
  */
 
-namespace Omnipay\PayPal;
+namespace Omnipay\AfterPay;
 
 use Omnipay\AfterPay\AfterPayItem;
 use Omnipay\Common\ItemBag;
