@@ -7,6 +7,13 @@ namespace Omnipay\AfterPay\Message;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
+    /**
+     * Observers. Used to report requests and responses to.
+     *
+     * @var Observer[]
+     */
+    private $observers = [];
+
     protected $liveEndpoint = [
         'BE' => 'https://www.afterpay.be/soapservices/rm/AfterPaycheck?wsdl',
         'DE' => '',
@@ -96,6 +103,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
                 $response = $e;
             }
             $request = $soapClient->__getLastRequest();
+            $this->notify(
+                [
+                    'request' => $request,
+                    'response' => $response,
+                ]
+            );
             return new Response($this, $response);
         } else {
             throw new \Exception('AfterPay: couldn\'t make the request.');
@@ -107,5 +120,42 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->getTestMode() ?
             $this->testEndpoint[$this->getCountry()] :
             $this->liveEndpoint[$this->getCountry()];
+    }
+
+    /**
+     * Attach an observer.
+     *
+     * @param Observer $observer
+     */
+    public function attach(Observer $observer)
+    {
+        $this->observers[] = $observer;
+    }
+
+    /**
+     * Detach an attached observer.
+     *
+     * @param Observer $observer
+     */
+    public function detach(Observer $observer)
+    {
+        $this->observers = array_filter(
+            $this->observers,
+            function ($a) use ($observer) {
+                return (!($a === $observer));
+            }
+        );
+    }
+
+    /**
+     * Notify all observers.
+     *
+     * @param $data
+     */
+    public function notify($data)
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this, $data);
+        }
     }
 }
