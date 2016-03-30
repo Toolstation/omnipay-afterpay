@@ -32,12 +32,12 @@ class Capture extends Management
 
     public function setInvoiceNumber($value)
     {
-        return $this->setParameter('invoicenumber', $value);
+        return $this->setParameter('invoiceNumber', $value);
     }
 
     public function getInvoiceNumber()
     {
-        return $this->getParameter('invoicenumber');
+        return $this->getParameter('invoiceNumber');
     }
 
     public function setCaptureDelayDays($value)
@@ -47,7 +47,12 @@ class Capture extends Management
 
     public function getCaptureDelayDays()
     {
-        return $this->getParameter('capturedelaydays');
+        $captureDelayDays = $this->getParameter('capturedelaydays');
+        if ($captureDelayDays === null) {
+            return 0;
+        }
+
+        return $captureDelayDays;
     }
 
     public function setShippingCompany($value)
@@ -57,7 +62,13 @@ class Capture extends Management
 
     public function getShippingCompany()
     {
-        return $this->getParameter('shippingcompany');
+        $shippingCompany = $this->getParameter('shippingcompany');
+
+        if ($shippingCompany === null) {
+            return '';
+        }
+
+        return $shippingCompany;
     }
 
     public function setTrackingNumber($value)
@@ -70,9 +81,19 @@ class Capture extends Management
         return $this->getParameter('trackingnumber');
     }
 
+    public function setVatCode($value)
+    {
+        return $this->setParameter('vatCode', $value);
+    }
+
+    public function getVatCode()
+    {
+        return $this->getParameter('vatCode');
+    }
+
     public function getData()
     {
-        $this->validate('transactionId', 'transactionRef', 'invoiceNumber', 'country');
+        $this->validate('transactionId', 'invoiceNumber', 'country', 'vatCode');
 
         $data = $this->getBaseData();
 
@@ -80,16 +101,22 @@ class Capture extends Management
 
         $data['orderType'] = $this->setDataOrderType($itemData);
 
-        $data['captureObject'] = new \stdClass();
+        $data['order'] = new \stdClass();
         if (count($itemData) > 0) {
-            $data['captureObject']->invoicelines = $itemData;
+            $data['order']->invoicelines = $itemData;
         }
-        $data['captureObject']->invoiceNumber = $this->getInvoiceNumber();
-        $data['captureObject']->transactionReference = $this->getTransactionReference();
-        $data['captureObject']->transactionkey = $this->getTransactionId();
-        $data['captureObject']->capturedelaydays = $this->getCaptureDelayDays();
-        $data['captureObject']->shippingCompany = $this->getShippingCompany();
-        $data['captureObject']->trackingNumber = $this->getTrackingNumber();
+        $data['order']->invoicenumber = $this->getInvoiceNumber();
+        $data['order']->transactionReference = $this->getTransactionReference();
+        $data['order']->transactionkey = new \stdClass();
+        $data['order']->transactionkey->ordernumber = $this->getTransactionId();
+        $data['order']->capturedelaydays = $this->getCaptureDelayDays();
+        $data['order']->shippingCompany = $this->getShippingCompany();
+        $trackingNumber = $this->getTrackingNumber();
+        if ($trackingNumber !== null) {
+            $data['order']->trackingNumber = $trackingNumber;
+        }
+
+        return $data;
     }
 
     protected function getItemData()
@@ -116,9 +143,11 @@ class Capture extends Management
     {
         $data['orderTypeName'] = 'captureFull';
 
-        if (count($itemData) > 0) {
-            $data['orderTypeName'] = 'capturePartial';
-        }
-        $data['orderTypeFunction'] = 'captureObject';
+//        if (count($itemData) > 0) {
+//            $data['orderTypeName'] = 'capturePartial';
+//        }
+        $data['orderTypeFunction'] = 'captureobject';
+
+        return $data;
     }
 }
