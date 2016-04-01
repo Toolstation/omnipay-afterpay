@@ -1,33 +1,39 @@
 <?php
 /**
- * Cancel an order. If items are provided, the cancellation will be partial, otherwise a full cancellation is done.
+ * Cancel an order.
  */
 
 namespace Omnipay\AfterPay\Message;
 
-use Omnipay\AfterPay\AfterPayItemBag;
-use Omnipay\Common\ItemBag;
-
+/**
+ * Class Cancel
+ *
+ * @package Omnipay\AfterPay\Message
+ */
 class Cancel extends Management
 {
-    /**
-     * Set the items in this order
-     *
-     * @param ItemBag|array $items An array of items in this order
-     * @return ItemBag
-     */
-    public function setItems($items)
-    {
-        if ($items && !$items instanceof ItemBag) {
-            $items = new AfterPayItemBag($items);
-        }
-
-        return $this->setParameter('items', $items);
-    }
-
     public function getData()
     {
         $this->validate('transactionId', 'country');
-//        @todo complete code
+
+        $data = $this->getBaseData();
+
+        $data['orderType'] = $this->setDataOrderType();
+
+        $data['order'] = new \stdClass();
+
+        $data['order']->transactionkey = new \stdClass();
+        $data['order']->transactionkey->ordernumber = $this->getTransactionId();
+
+        return $data;
+    }
+
+    protected function setDataOrderType()
+    {
+        $data['orderTypeName'] = 'cancelOrder';
+
+        $data['orderTypeFunction'] = 'ordermanagementobject';
+
+        return $data;
     }
 }

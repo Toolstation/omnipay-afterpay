@@ -75,7 +75,25 @@ class Gateway extends AbstractGateway
 
     public function capture(array $parameters = array())
     {
-        /** \Omnipay\AfterPay\Message\PurchaseRequest */
+        /** \Omnipay\AfterPay\Message\Capture */
         return $this->createRequest('\Omnipay\AfterPay\Message\Capture', $parameters);
+    }
+
+    public function cancel(array $parameters = array())
+    {
+        /** \Omnipay\AfterPay\Message\Cancel */
+        return $this->createRequest('\Omnipay\AfterPay\Message\Cancel', $parameters);
+    }
+
+    public function refund(array $parameters = array())
+    {
+        /** \Omnipay\AfterPay\Message\Refund */
+        return $this->createRequest('\Omnipay\AfterPay\Message\Refund', $parameters);
+    }
+
+    public function void(array $parameters = array())
+    {
+        /** \Omnipay\AfterPay\Message\Void */
+        return $this->createRequest('\Omnipay\AfterPay\Message\Void', $parameters);
     }
 }

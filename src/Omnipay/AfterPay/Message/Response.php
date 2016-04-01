@@ -36,6 +36,15 @@ class Response extends AbstractResponse
         return '';
     }
 
+    public function getAfterPayOrderReference()
+    {
+        if (isset($this->data->return->afterPayOrderReference)) {
+            return $this->data->return->afterPayOrderReference;
+        }
+
+        return '';
+    }
+
     public function getMessage()
     {
         $msg = '';

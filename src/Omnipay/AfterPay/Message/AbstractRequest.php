@@ -95,9 +95,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             } catch (\Exception $e) {
                 $response = $e;
             }
-            $request = $soapClient->__getLastRequest();
 
-            return new Response($this, $response);
+            return $this->createResponse($this, $response);
         } else {
             throw new \Exception('AfterPay: couldn\'t make the request.');
         }
@@ -108,5 +107,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->getTestMode() ?
             $this->testEndpoint[$this->getCountry()] :
             $this->liveEndpoint[$this->getCountry()];
+    }
+
+    public function createResponse($request, $response)
+    {
+        return new Response($request, $response);
     }
 }

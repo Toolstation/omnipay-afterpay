@@ -1,18 +1,39 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: nick
- * Date: 22/03/2016
- * Time: 09:06
+ * Void an order
  */
 
 namespace Omnipay\AfterPay\Message;
 
+/**
+ * Class Void
+ *
+ * @package Omnipay\AfterPay\Message
+ */
 class Void extends Management
 {
     public function getData()
     {
         $this->validate('transactionId', 'country');
-//        @todo complete code
+
+        $data = $this->getBaseData();
+
+        $data['orderType'] = $this->setDataOrderType();
+
+        $data['order'] = new \stdClass();
+
+        $data['order']->transactionkey = new \stdClass();
+        $data['order']->transactionkey->ordernumber = $this->getTransactionId();
+
+        return $data;
+    }
+
+    protected function setDataOrderType()
+    {
+        $data['orderTypeName'] = 'doVoid';
+
+        $data['orderTypeFunction'] = 'ordermanagementobject';
+
+        return $data;
     }
 }

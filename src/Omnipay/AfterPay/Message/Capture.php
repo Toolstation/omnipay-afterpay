@@ -91,6 +91,16 @@ class Capture extends Management
         return $this->getParameter('vatCode');
     }
 
+    public function setPartial($value)
+    {
+        return $this->setParameter('partial', $value);
+    }
+
+    public function getPartial()
+    {
+        return $this->getParameter('partial');
+    }
+
     public function getData()
     {
         $this->validate('transactionId', 'invoiceNumber', 'country', 'vatCode');
@@ -99,7 +109,7 @@ class Capture extends Management
 
         $itemData = $this->getItemData();
 
-        $data['orderType'] = $this->setDataOrderType($itemData);
+        $data['orderType'] = $this->setDataOrderType();
 
         $data['order'] = new \stdClass();
         if (count($itemData) > 0) {
@@ -139,15 +149,23 @@ class Capture extends Management
         return $data;
     }
 
-    protected function setDataOrderType($itemData)
+    protected function setDataOrderType()
     {
         $data['orderTypeName'] = 'captureFull';
 
-//        if (count($itemData) > 0) {
-//            $data['orderTypeName'] = 'capturePartial';
-//        }
+        $partial = $this->getPartial();
+
+        if ($partial !== null) {
+            $data['orderTypeName'] = 'capturePartial';
+        }
+
         $data['orderTypeFunction'] = 'captureobject';
 
         return $data;
+    }
+
+    public function createResponse($request, $response)
+    {
+        return new CaptureResponse($request, $response);
     }
 }
