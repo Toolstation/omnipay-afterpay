@@ -113,6 +113,28 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->getParameter('country');
     }
 
+    public function setSoapClient($value)
+    {
+        return $this->setParameter('soapClient', $value);
+    }
+
+    public function getSoapClient()
+    {
+        $soapClient = $this->getParameter('soapClient');
+
+        if ($soapClient === null) {
+            $soapClient = new \SoapClient(
+                $this->getEndpoint(),
+                array(
+                    'location' => $this->getEndpoint(),
+                    'trace' => true,
+                    'cache_wsdl' => WSDL_CACHE_NONE
+                )
+            );
+        }
+
+        return $soapClient;
+    }
     /**
      * Get the authorisation class to send to AfterPay
      * @return \stdClass
@@ -136,14 +158,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      */
     public function sendData($data)
     {
-        $soapClient = new \SoapClient(
-            $this->getEndpoint(),
-            array(
-                'location' => $this->getEndpoint(),
-                'trace' => true,
-                'cache_wsdl' => WSDL_CACHE_NONE
-            )
-        );
+        $soapClient = $this->getSoapClient();
 
         if (is_object($soapClient)) {
             try {

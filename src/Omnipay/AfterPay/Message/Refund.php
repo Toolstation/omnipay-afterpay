@@ -6,6 +6,8 @@
 namespace Omnipay\AfterPay\Message;
 
 use Omnipay\AfterPay\AfterPayItem;
+use Omnipay\AfterPay\AfterPayItemBag;
+use Omnipay\Common\ItemBag;
 
 /**
  * Class Refund
@@ -14,6 +16,21 @@ use Omnipay\AfterPay\AfterPayItem;
  */
 class Refund extends Management
 {
+    /**
+     * Set the items in this order
+     *
+     * @param ItemBag|array $items An array of items in this order
+     * @return ItemBag
+     */
+    public function setItems($items)
+    {
+        if ($items && !$items instanceof ItemBag) {
+            $items = new AfterPayItemBag($items);
+        }
+
+        return $this->setParameter('items', $items);
+    }
+
     /**
      * Set the Invoice Number
      * @param string $value
@@ -103,6 +120,26 @@ class Refund extends Management
     public function getTrackingNumber()
     {
         return $this->getParameter('trackingnumber');
+    }
+
+    /**
+     * Set the Vat Code
+     * @param int $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setVatCode($value)
+    {
+        return $this->setParameter('vatCode', $value);
+    }
+
+    /**
+     * Get the Vat Code.
+     * @return int
+     */
+    public function getVatCode()
+    {
+        return $this->getParameter('vatCode');
     }
 
     /**

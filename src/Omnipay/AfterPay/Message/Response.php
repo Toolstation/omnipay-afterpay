@@ -77,12 +77,12 @@ class Response extends AbstractResponse
             $msg .= $this->data->return->rejectDescription;
         }
 
-        if (isset($this->data->return->failures->failure)) {
-            $msg .= $this->data->return->failures->failure;
+        if (isset($this->data->return->failures->failures->failure)) {
+            $msg .= $this->data->return->failures->failures->failure;
         }
 
-        if (isset($this->data->return->failures->fieldname)) {
-            $msg .= ' (fieldname : '.$this->data->return->failures->fieldname.')';
+        if (isset($this->data->return->failures->failures->fieldName)) {
+            $msg .= ' (fieldname : '.$this->data->return->failures->failures->fieldName.')';
         }
 
         return $msg;
