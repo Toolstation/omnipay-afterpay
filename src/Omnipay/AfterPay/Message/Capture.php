@@ -30,21 +30,41 @@ class Capture extends Management
         return $this->setParameter('items', $items);
     }
 
+    /**
+     * Set the Invoice Number.
+     * @param string $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setInvoiceNumber($value)
     {
         return $this->setParameter('invoiceNumber', $value);
     }
 
+    /**
+     * Get the Invoice Number.
+     * @return string
+     */
     public function getInvoiceNumber()
     {
         return $this->getParameter('invoiceNumber');
     }
 
+    /**
+     * Set the Capture Delay Days.
+     * @param int $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setCaptureDelayDays($value)
     {
         return $this->setParameter('capturedelaydays', $value);
     }
 
+    /**
+     * Get the Capture Delay Days. If not set this will return 0.
+     * @return int
+     */
     public function getCaptureDelayDays()
     {
         $captureDelayDays = $this->getParameter('capturedelaydays');
@@ -55,11 +75,21 @@ class Capture extends Management
         return $captureDelayDays;
     }
 
+    /**
+     * Set the shipping company
+     * @param string $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setShippingCompany($value)
     {
         return $this->setParameter('shippingcompany', $value);
     }
 
+    /**
+     * Get the Shipping Company. If not set, this will return an empty string.
+     * @return string
+     */
     public function getShippingCompany()
     {
         $shippingCompany = $this->getParameter('shippingcompany');
@@ -71,36 +101,71 @@ class Capture extends Management
         return $shippingCompany;
     }
 
+    /**
+     * Set the tracking number.
+     * @param string $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setTrackingNumber($value)
     {
         return $this->setParameter('trackingnumber', $value);
     }
 
+    /**
+     * Get the tracking number.
+     * @return string|null
+     */
     public function getTrackingNumber()
     {
         return $this->getParameter('trackingnumber');
     }
 
+    /**
+     * Set the Vat Code
+     * @param int $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setVatCode($value)
     {
         return $this->setParameter('vatCode', $value);
     }
 
+    /**
+     * Get the Vat Code.
+     * @return int
+     */
     public function getVatCode()
     {
         return $this->getParameter('vatCode');
     }
 
+    /**
+     * Sets an indication that this is a partial capture. If this is not set it is a full capture.
+     * @param $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setPartial($value)
     {
         return $this->setParameter('partial', $value);
     }
 
+    /**
+     * Returns the partial setting. If not set (null) this is a full capture.
+     * @return mixed
+     */
     public function getPartial()
     {
         return $this->getParameter('partial');
     }
 
+    /**
+     * Get the data for the refund request.
+     * @return array
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
+     */
     public function getData()
     {
         $this->validate('transactionId', 'invoiceNumber', 'country', 'vatCode');
@@ -129,6 +194,10 @@ class Capture extends Management
         return $data;
     }
 
+    /**
+     * Get the items on the order to be refunded.
+     * @return array
+     */
     protected function getItemData()
     {
         $data = array();
@@ -149,6 +218,10 @@ class Capture extends Management
         return $data;
     }
 
+    /**
+     * Set the values to be used in the SOAP call to Afterpay dependant on this being a full or partial refund.
+     * @return mixed
+     */
     protected function setDataOrderType()
     {
         $data['orderTypeName'] = 'captureFull';
@@ -164,6 +237,13 @@ class Capture extends Management
         return $data;
     }
 
+    /**
+     * Create a respopnse.
+     * @param $request
+     * @param $response
+     *
+     * @return CaptureResponse
+     */
     public function createResponse($request, $response)
     {
         return new CaptureResponse($request, $response);

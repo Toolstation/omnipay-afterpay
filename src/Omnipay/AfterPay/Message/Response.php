@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * A response from AfterPay.
+ */
 namespace Omnipay\AfterPay\Message;
 
 use DOMDocument;
@@ -12,6 +14,12 @@ use Omnipay\Common\Message\RequestInterface;
  */
 class Response extends AbstractResponse
 {
+    /**
+     * Response constructor.
+     *
+     * @param RequestInterface $request
+     * @param mixed            $data
+     */
     public function __construct(RequestInterface $request, $data)
     {
         $this->request = $request;
@@ -19,6 +27,10 @@ class Response extends AbstractResponse
         $this->data = $data;
     }
 
+    /**
+     * Returns true if the response is successful.
+     * @return bool
+     */
     public function isSuccessful()
     {
         if (!isset($this->data->return->statusCode)) {
@@ -27,6 +39,10 @@ class Response extends AbstractResponse
         return "A" === (string) $this->data->return->statusCode;
     }
 
+    /**
+     * Get the transaction reference.
+     * @return string
+     */
     public function getTransactionReference()
     {
         if (isset($this->data->return->transactionId)) {
@@ -36,6 +52,10 @@ class Response extends AbstractResponse
         return '';
     }
 
+    /**
+     * Get the AfterPay order reference.
+     * @return string
+     */
     public function getAfterPayOrderReference()
     {
         if (isset($this->data->return->afterPayOrderReference)) {
@@ -45,6 +65,10 @@ class Response extends AbstractResponse
         return '';
     }
 
+    /**
+     * Get the message (generally relevant if the response is not successful)
+     * @return string
+     */
     public function getMessage()
     {
         $msg = '';

@@ -11,27 +11,59 @@ use Omnipay\AfterPay\AfterPayItemBag;
 */
 class PurchaseRequest extends AbstractRequest
 {
+    /**
+     * The address the bill is for.
+     * @var string
+     */
     private $billToAddress;
 
+    /**
+     * The address the order is to be shipped to.
+     * @var string
+     */
     private $shipToAddress;
 
+    /**
+     * Possible order types: B2C = Business to customer, B2B = Business to Business.
+     * @var array
+     */
     private $possibleOrderTypes = ['B2C', 'B2B'];
 
+    /**
+     * Set the order type.
+     * @param string $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setOrderType($value)
     {
         return $this->setParameter('orderType', $value);
     }
 
+    /**
+     * Get the order type.
+     * @return string
+     */
     public function getOrderType()
     {
         return $this->getParameter('orderType');
     }
 
+    /**
+     * Set the Vat code
+     * @param int $value
+     *
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
     public function setVatCode($value)
     {
         return $this->setParameter('vatCode', $value);
     }
 
+    /**
+     * Get the Vat Code.
+     * @return int
+     */
     public function getVatCode()
     {
         return $this->getParameter('vatCode');
@@ -52,6 +84,12 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('items', $items);
     }
 
+    /**
+     * Get the data for this purchase.
+     * @return mixed
+     * @throws \Exception
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
+     */
     public function getData()
     {
         $this->validate('amount', 'currency', 'transactionId', 'clientIp', 'orderType', 'country');
@@ -147,6 +185,10 @@ class PurchaseRequest extends AbstractRequest
         return $order;
     }
 
+    /**
+     * Get the items on this order.
+     * @return array
+     */
     protected function getItemData()
     {
         $data = array();

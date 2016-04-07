@@ -12,6 +12,11 @@ namespace Omnipay\AfterPay\Message;
  */
 class Cancel extends Management
 {
+    /**
+     * Get the data to send for the cancellation.
+     * @return array
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
+     */
     public function getData()
     {
         $this->validate('transactionId', 'country');
@@ -28,6 +33,10 @@ class Cancel extends Management
         return $data;
     }
 
+    /**
+     * Set the values to be used in the SOAP call to AfterPay
+     * @return mixed
+     */
     protected function setDataOrderType()
     {
         $data['orderTypeName'] = 'cancelOrder';

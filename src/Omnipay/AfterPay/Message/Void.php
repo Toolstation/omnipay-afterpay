@@ -12,6 +12,11 @@ namespace Omnipay\AfterPay\Message;
  */
 class Void extends Management
 {
+    /**
+     * Get the data to void the payment.
+     * @return array
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
+     */
     public function getData()
     {
         $this->validate('transactionId', 'country');
@@ -28,6 +33,10 @@ class Void extends Management
         return $data;
     }
 
+    /**
+     * Set the values to be used in the SOAP request to AfterPay
+     * @return array
+     */
     protected function setDataOrderType()
     {
         $data['orderTypeName'] = 'doVoid';

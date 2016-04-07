@@ -5,8 +5,17 @@
 
 namespace Omnipay\AfterPay\Message;
 
+/**
+ * Class CaptureResponse
+ *
+ * @package Omnipay\AfterPay\Message
+ */
 class CaptureResponse extends Response
 {
+    /**
+     * Get the amount authorised in the Capture
+     * @return int
+     */
     public function getAmountAuthorised()
     {
         if ($this->isSuccessful()) {
@@ -16,6 +25,10 @@ class CaptureResponse extends Response
         return 0;
     }
 
+    /**
+     * Get the amount captured.
+     * @return int
+     */
     public function getAmountCaptured()
     {
         if ($this->isSuccessful()) {
