@@ -108,6 +108,6 @@ class ResponseTest extends TestCase
 
     private function getMockSoapResponse($responseName)
     {
-        return include('../Mock/'.$responseName.'.php');
+        return include(__DIR__.'/../Mock/'.$responseName.'.php');
     }
 }
