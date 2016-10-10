@@ -34,6 +34,13 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     ];
 
     /**
+     * Observers. Used to report requests and responses to.
+     *
+     * @var array
+     */
+    private $observers = [];
+
+    /**
      * Get the Merchant Id.
      * @return string
      */
@@ -175,6 +182,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
                 $response = $e;
             }
 
+            $this->notify(
+                [
+                    'response' => $response
+                ]
+            );
+
             return $this->createResponse($this, $response);
         } else {
             throw new \Exception('AfterPay: couldn\'t make the request.');
@@ -202,5 +215,42 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function createResponse($request, $response)
     {
         return new Response($request, $response);
+    }
+
+    /**
+     * Attach an observer.
+     *
+     * @param Observer $observer
+     */
+    public function attach(Observer $observer)
+    {
+        $this->observers[] = $observer;
+    }
+
+    /**
+     * Detach an attached observer.
+     *
+     * @param Observer $observer
+     */
+    public function detach(Observer $observer)
+    {
+        $this->observers = array_filter(
+            $this->observers,
+            function ($a) use ($observer) {
+                return (!($a === $observer));
+            }
+        );
+    }
+
+    /**
+     * Notify all observers.
+     *
+     * @param $data
+     */
+    public function notify($data)
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this, $data);
+        }
     }
 }
