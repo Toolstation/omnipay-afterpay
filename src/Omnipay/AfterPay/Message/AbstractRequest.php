@@ -184,7 +184,9 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
             $this->notify(
                 [
-                    'response' => $response
+                    'request' => $soapClient->__getLastRequest(),
+                    'response' => $response,
+                    'event' => $data['orderType']['orderTypeName'],
                 ]
             );
 
