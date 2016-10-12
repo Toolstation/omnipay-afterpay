@@ -209,7 +209,7 @@ class Refund extends Management
                 $order->articleId = $item->getCode();
                 $order->articleDescription = $item->getName();
                 $order->quantity = $item->getQuantity();
-                $order->unitprice = $this->formatCurrency($item->getPrice());
+                $order->unitprice = $item->getPrice() * 100;
                 $order->vatcategory = $this->getVatCode();
                 $data[] = $order;
             }
