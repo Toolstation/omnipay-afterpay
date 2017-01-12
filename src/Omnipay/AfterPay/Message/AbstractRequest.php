@@ -255,4 +255,16 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             $observer->update($this, $data);
         }
     }
+
+    /**
+     * Format an amount for the payment currency.
+     *
+     * @return string
+     */
+    public function formatCurrency($amount)
+    {
+        $formatttedAmount = parent::formatCurrency($amount);
+
+        return substr($formatttedAmount, 0, strlen($formatttedAmount) - 3);
+    }
 }
